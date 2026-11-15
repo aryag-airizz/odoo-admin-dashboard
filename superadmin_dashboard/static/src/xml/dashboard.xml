@@ -16,7 +16,7 @@
             </div>
 
             <!-- Loading -->
-            <div t-if="state.loading" class="text-center p-5">
+            <div t-if="this.state.loading" class="text-center p-5">
                 <i class="fa fa-spinner fa-spin fa-2x"/>
                 <p class="mt-2">Loading dashboard...</p>
             </div>
@@ -30,7 +30,7 @@
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <p class="text-muted mb-2">Total Companies</p>
-                                    <h2 t-esc="state.stats.total_companies"/>
+                                    <h2 t-esc="this.state.stats.total_companies"/>
                                 </div>
                                 <i class="fa fa-building fa-2x text-primary"/>
                             </div>
@@ -48,7 +48,7 @@
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <p class="text-muted mb-2">Active Companies</p>
-                                    <h2 t-esc="state.stats.active_companies"/>
+                                    <h2 t-esc="this.state.stats.active_companies"/>
                                 </div>
                                 <i class="fa fa-check-circle fa-2x text-success"/>
                             </div>
@@ -66,7 +66,7 @@
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <p class="text-muted mb-2">Total Databases</p>
-                                    <h2 t-esc="state.stats.total_databases"/>
+                                    <h2 t-esc="this.state.stats.total_databases"/>
                                 </div>
                                 <i class="fa fa-database fa-2x text-info"/>
                             </div>
@@ -84,7 +84,7 @@
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <p class="text-muted mb-2">Production Databases</p>
-                                    <h2 t-esc="state.stats.production_databases"/>
+                                    <h2 t-esc="this.state.stats.production_databases"/>
                                 </div>
                                 <i class="fa fa-server fa-2x text-warning"/>
                             </div>

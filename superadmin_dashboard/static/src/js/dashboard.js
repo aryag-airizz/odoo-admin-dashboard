@@ -1,6 +1,7 @@
+
 /** @odoo-module **/
 
-import { Component, onWillStart, useState } from "@odoo/owl";
+import { Component, onWillStart, proxy } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
@@ -11,7 +12,7 @@ class SuperadminDashboard extends Component {
         this.orm = useService("orm");
         this.action = useService("action");
 
-        this.state = useState({
+        this.state = proxy({
             loading: true,
             stats: {
                 total_companies: 0,
@@ -32,11 +33,15 @@ class SuperadminDashboard extends Component {
     }
 
     openCompanies() {
-        this.action.doAction("superadmin_dashboard.action_superadmin_companies");
+        this.action.doAction(
+            "superadmin_dashboard.action_superadmin_companies"
+        );
     }
 
     openDatabases() {
-        this.action.doAction("superadmin_dashboard.action_superadmin_databases");
+        this.action.doAction(
+            "superadmin_dashboard.action_superadmin_databases"
+        );
     }
 }
 
