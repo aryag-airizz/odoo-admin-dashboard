@@ -19,7 +19,7 @@
 
     'data': [
         'security/security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'views/company_views.xml',
         'views/database_views.xml',
         'views/dashboard_views.xml',
