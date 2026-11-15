@@ -1,0 +1,31 @@
+.o_superadmin_dashboard {
+    min-height: 100%;
+    background: #f7f8fa;
+
+    .o_superadmin_header {
+        margin-bottom: 28px;
+    }
+
+    .o_superadmin_stat_card {
+        background: #ffffff;
+        border: 1px solid #e8eaed;
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .o_superadmin_stat_value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #202124;
+        }
+
+        .o_superadmin_stat_label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+    }
+}

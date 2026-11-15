@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_superadmin_company,superadmin.company,model_superadmin_company,group_superadmin_dashboard,1,1,1,1
+access_superadmin_database,superadmin.database,model_superadmin_database,group_superadmin_dashboard,1,1,1,1

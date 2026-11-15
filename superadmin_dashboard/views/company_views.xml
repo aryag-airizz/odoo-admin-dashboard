@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Company List -->
+    <record id="view_superadmin_company_list" model="ir.ui.view">
+        <field name="name">superadmin.company.list</field>
+        <field name="model">superadmin.company</field>
+        <field name="arch" type="xml">
+            <list string="Companies">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="database_ids" widget="many2many_tags"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Company Form -->
+    <record id="view_superadmin_company_form" model="ir.ui.view">
+        <field name="name">superadmin.company.form</field>
+        <field name="model">superadmin.company</field>
+        <field name="arch" type="xml">
+            <form string="Company">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                        </group>
+                        <group>
+                            <field name="website"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Databases">
+                            <field name="database_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="url"/>
+                                    <field name="environment"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Company Action -->
+    <record id="action_superadmin_companies" model="ir.actions.act_window">
+        <field name="name">Companies</field>
+        <field name="res_model">superadmin.company</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>
