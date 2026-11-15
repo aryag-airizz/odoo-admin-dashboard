@@ -35,7 +35,7 @@
                                 <i class="fa fa-building fa-2x text-primary"/>
                             </div>
                             <button class="btn btn-link px-0 mt-3"
-                                    t-on-click="openCompanies">
+                                    t-on-click="() => this.openCompanies()">
                                 View Companies →
                             </button>
                         </div>
@@ -53,7 +53,7 @@
                                 <i class="fa fa-check-circle fa-2x text-success"/>
                             </div>
                             <button class="btn btn-link px-0 mt-3"
-                                    t-on-click="openCompanies">
+                                    t-on-click="() => this.openCompanies()">
                                 View Companies →
                             </button>
                         </div>
@@ -71,7 +71,7 @@
                                 <i class="fa fa-database fa-2x text-info"/>
                             </div>
                             <button class="btn btn-link px-0 mt-3"
-                                    t-on-click="openDatabases">
+                                    t-on-click="() => this.openDatabases()">
                                 View Databases →
                             </button>
                         </div>
@@ -89,7 +89,7 @@
                                 <i class="fa fa-server fa-2x text-warning"/>
                             </div>
                             <button class="btn btn-link px-0 mt-3"
-                                    t-on-click="openDatabases">
+                                    t-on-click="() => this.openDatabases()">
                                 View Databases →
                             </button>
                         </div>
