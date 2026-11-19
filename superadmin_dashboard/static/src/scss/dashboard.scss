@@ -1,31 +1,22 @@
 .o_superadmin_dashboard {
-    min-height: 100%;
-    background: #f7f8fa;
+    overflow-y: auto;
 
-    .o_superadmin_header {
-        margin-bottom: 28px;
-    }
-
-    .o_superadmin_stat_card {
-        background: #ffffff;
-        border: 1px solid #e8eaed;
-        border-radius: 12px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .o_superadmin_kpi {
+        transition: box-shadow 0.15s ease;
+        cursor: pointer;
 
         &:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
         }
 
-        .o_superadmin_stat_value {
-            font-size: 30px;
+        .o_superadmin_kpi_value {
+            font-size: 1.9rem;
             font-weight: 700;
-            color: #202124;
+            line-height: 1.1;
         }
+    }
 
-        .o_superadmin_stat_label {
-            color: #6b7280;
-            font-size: 14px;
-        }
+    .o_superadmin_row_click {
+        cursor: pointer;
     }
 }
