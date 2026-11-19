@@ -1,74 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Company List -->
+    <!-- Companies are discovered by the sync: the UI is strictly read-only. -->
     <record id="view_superadmin_company_list" model="ir.ui.view">
         <field name="name">superadmin.company.list</field>
         <field name="model">superadmin.company</field>
         <field name="arch" type="xml">
-            <list string="Companies">
+            <list string="Companies" create="0" edit="0" delete="0" duplicate="0">
                 <field name="name"/>
-                <field name="code"/>
-                <field name="email"/>
-                <field name="phone"/>
-                <field name="database_ids" widget="many2many_tags"/>
-                <field name="active"/>
+                <field name="database_id"/>
+                <field name="environment" optional="hide"/>
+                <field name="country"/>
+                <field name="currency"/>
+                <field name="users_count" sum="Total"/>
+                <field name="employees_count" optional="hide"/>
+                <field name="sale_orders_30d" optional="hide"/>
+                <field name="revenue_30d" optional="show"/>
+                <field name="receivable" optional="show"/>
+                <field name="payable" optional="hide"/>
+                <field name="synced_at" optional="hide"/>
             </list>
         </field>
     </record>
 
-    <!-- Company Form -->
     <record id="view_superadmin_company_form" model="ir.ui.view">
         <field name="name">superadmin.company.form</field>
         <field name="model">superadmin.company</field>
         <field name="arch" type="xml">
-            <form string="Company">
+            <form string="Company" create="0" edit="0" delete="0" duplicate="0">
                 <sheet>
-                    <div class="oe_title">
-                        <label for="name"/>
-                        <h1>
-                            <field name="name"/>
-                        </h1>
-                    </div>
-
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
                     <group>
-                        <group>
-                            <field name="code"/>
+                        <group string="Identity">
+                            <field name="database_id"/>
+                            <field name="vat"/>
                             <field name="email"/>
                             <field name="phone"/>
-                        </group>
-                        <group>
                             <field name="website"/>
-                            <field name="active"/>
+                            <field name="city"/>
+                            <field name="country"/>
+                        </group>
+                        <group string="Last 30 days / current">
+                            <field name="currency"/>
+                            <field name="users_count"/>
+                            <field name="employees_count"/>
+                            <field name="sale_orders_30d"/>
+                            <field name="purchase_orders_30d"/>
+                            <field name="open_transfers"/>
+                            <field name="revenue_30d"/>
+                            <field name="receivable"/>
+                            <field name="payable"/>
+                            <field name="synced_at"/>
                         </group>
                     </group>
-
-                    <notebook>
-                        <page string="Databases">
-                            <field name="database_ids">
-                                <list editable="bottom">
-                                    <field name="name"/>
-                                    <field name="url"/>
-                                    <field name="environment"/>
-                                    <field name="active"/>
-                                </list>
-                            </field>
-                        </page>
-
-                        <page string="Notes">
-                            <field name="notes"/>
-                        </page>
-                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- Company Action -->
+    <record id="view_superadmin_company_search" model="ir.ui.view">
+        <field name="name">superadmin.company.search</field>
+        <field name="model">superadmin.company</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="database_id"/>
+                <field name="vat"/>
+                <group>
+                    <filter name="g_db" string="Database" context="{'group_by': 'database_id'}"/>
+                    <filter name="g_country" string="Country" context="{'group_by': 'country'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_superadmin_companies" model="ir.actions.act_window">
         <field name="name">Companies</field>
         <field name="res_model">superadmin.company</field>
         <field name="view_mode">list,form</field>
+        <field name="domain">[('database_state', '=', 'connected')]</field>
+        <field name="context">{'search_default_g_db': 1}</field>
     </record>
 
 </odoo>

@@ -1,38 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
-    <menuitem
-        id="menu_superadmin_root"
-        name="Superadmin"
-        sequence="10"
-        groups="superadmin_dashboard.group_superadmin_dashboard"
-    />
-
-    <menuitem
-        id="menu_superadmin_dashboard"
-        name="Dashboard"
-        parent="menu_superadmin_root"
-        action="action_superadmin_dashboard"
-        sequence="1"
-        groups="superadmin_dashboard.group_superadmin_dashboard"
-    />
-
-    <menuitem
-        id="menu_superadmin_companies"
-        name="Companies"
-        parent="menu_superadmin_root"
-        action="action_superadmin_companies"
-        sequence="10"
-        groups="superadmin_dashboard.group_superadmin_dashboard"
-    />
-
-    <menuitem
-        id="menu_superadmin_databases"
-        name="Databases"
-        parent="menu_superadmin_root"
-        action="action_superadmin_databases"
-        sequence="20"
-        groups="superadmin_dashboard.group_superadmin_dashboard"
-    />
-
+    <menuitem id="menu_superadmin_root" name="Superadmin" sequence="10"
+              groups="superadmin_dashboard.group_superadmin_dashboard"/>
+    <menuitem id="menu_superadmin_dashboard" name="Dashboard" parent="menu_superadmin_root"
+              action="action_superadmin_dashboard" sequence="1"/>
+    <menuitem id="menu_superadmin_databases" name="Databases" parent="menu_superadmin_root"
+              action="action_superadmin_databases" sequence="10"/>
+    <menuitem id="menu_superadmin_companies" name="Companies" parent="menu_superadmin_root"
+              action="action_superadmin_companies" sequence="20"/>
 </odoo>

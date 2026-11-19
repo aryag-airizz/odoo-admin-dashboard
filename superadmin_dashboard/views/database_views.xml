@@ -1,55 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Database List -->
     <record id="view_superadmin_database_list" model="ir.ui.view">
         <field name="name">superadmin.database.list</field>
         <field name="model">superadmin.database</field>
         <field name="arch" type="xml">
-            <list string="Databases">
+            <list string="Databases" decoration-danger="state == 'error'" decoration-warning="key_expiring">
                 <field name="name"/>
-                <field name="company_id"/>
+                <field name="client_name" optional="show"/>
                 <field name="url"/>
                 <field name="environment"/>
-                <field name="active"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'connected'"
+                       decoration-danger="state == 'error'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="company_count"/>
+                <field name="last_sync_at"/>
+                <field name="api_key_expires_on" optional="show"/>
+                <field name="key_expiring" column_invisible="True"/>
             </list>
         </field>
     </record>
 
-    <!-- Database Form -->
     <record id="view_superadmin_database_form" model="ir.ui.view">
         <field name="name">superadmin.database.form</field>
         <field name="model">superadmin.database</field>
         <field name="arch" type="xml">
             <form string="Database">
+                <header>
+                    <button name="action_test_connection" type="object" string="Test connection"
+                            groups="superadmin_dashboard.group_superadmin_manager"
+                            invisible="not has_api_key"/>
+                    <button name="action_sync" type="object" string="Sync now" class="btn-primary"
+                            groups="superadmin_dashboard.group_superadmin_manager"
+                            invisible="not has_api_key"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,connected"/>
+                </header>
                 <sheet>
+                    <div class="alert alert-danger" role="alert" invisible="state != 'error'">
+                        <field name="last_error"/>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not privileged_key">
+                        The API user of this database is an internal user or an administrator.
+                        Use a dedicated portal user that only belongs to "Superadmin Integration".
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not key_expiring">
+                        The API key expires soon. Create a new one and paste it below.
+                    </div>
                     <div class="oe_title">
                         <label for="name"/>
-                        <h1>
-                            <field name="name"/>
-                        </h1>
+                        <h1><field name="name" placeholder="e.g. ACME production"/></h1>
                     </div>
-
                     <group>
-                        <field name="company_id"/>
-                        <field name="url"/>
-                        <field name="environment"/>
-                        <field name="active"/>
+                        <group string="Target">
+                            <field name="url" placeholder="https://erp.client.com"/>
+                            <field name="db_name"/>
+                            <field name="environment"/>
+                            <field name="client_name"/>
+                        </group>
+                        <group string="Credentials" groups="superadmin_dashboard.group_superadmin_manager">
+                            <field name="has_api_key" invisible="1"/>
+                            <field name="api_key" password="True"
+                                   placeholder="Paste a new key to set or rotate it"/>
+                            <field name="api_key_expires_on"/>
+                            <field name="active"/>
+                        </group>
                     </group>
-
-                    <group>
-                        <field name="notes"/>
+                    <group invisible="state == 'draft'">
+                        <group>
+                            <field name="odoo_version"/>
+                            <field name="installed_apps"/>
+                        </group>
+                        <group>
+                            <field name="last_sync_at"/>
+                            <field name="privileged_key" invisible="1"/>
+                            <field name="key_expiring" invisible="1"/>
+                        </group>
                     </group>
+                    <notebook>
+                        <page string="Companies">
+                            <field name="company_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="country"/>
+                                    <field name="currency"/>
+                                    <field name="users_count"/>
+                                    <field name="revenue_30d"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes"><field name="notes"/></page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- Database Action -->
+    <record id="view_superadmin_database_search" model="ir.ui.view">
+        <field name="name">superadmin.database.search</field>
+        <field name="model">superadmin.database</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="client_name"/>
+                <field name="url"/>
+                <filter name="f_error" string="In error" domain="[('state', '=', 'error')]"/>
+                <filter name="f_connected" string="Connected" domain="[('state', '=', 'connected')]"/>
+                <filter name="f_expiring" string="Key expiring" domain="[('key_expiring', '=', True)]"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="g_env" string="Environment" context="{'group_by': 'environment'}"/>
+                    <filter name="g_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_superadmin_databases" model="ir.actions.act_window">
         <field name="name">Databases</field>
         <field name="res_model">superadmin.database</field>
         <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first database</p>
+            <p>Install <b>Superadmin Connector</b> in the client database, create the API
+               user, then enter its URL and API key here.</p>
+        </field>
     </record>
 
 </odoo>

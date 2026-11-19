@@ -1,3 +1,4 @@
-id,name,model_id/id,group_id/id,operation,domain
-access_superadmin_company,superadmin.company,model_superadmin_company,superadmin_dashboard.group_superadmin_dashboard,crud,
-access_superadmin_database,superadmin.database,model_superadmin_database,superadmin_dashboard.group_superadmin_dashboard,crud,
+id,name,model_id,group_id/id,operation,domain
+access_superadmin_database_viewer,superadmin.database viewer,superadmin.database,superadmin_dashboard.group_superadmin_dashboard,r,
+access_superadmin_database_manager,superadmin.database manager,superadmin.database,superadmin_dashboard.group_superadmin_manager,crud,
+access_superadmin_company_viewer,superadmin.company viewer,superadmin.company,superadmin_dashboard.group_superadmin_dashboard,r,

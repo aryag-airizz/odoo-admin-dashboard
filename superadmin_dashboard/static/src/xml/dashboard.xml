@@ -1,104 +1,188 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-    <t t-name="superadmin_dashboard.Dashboard" owl="1">
+    <t t-name="superadmin_dashboard.Dashboard">
+        <div class="o_superadmin_dashboard p-4 h-100">
 
-        <div class="o_superadmin_dashboard p-4">
-
-            <!-- Dashboard Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="mb-1">Superadmin Dashboard</h1>
-                    <p class="text-muted mb-0">
-                        Manage all your companies and Odoo databases
-                    </p>
-                </div>
-            </div>
-
-            <!-- Loading -->
             <div t-if="this.state.loading" class="text-center p-5">
                 <i class="fa fa-spinner fa-spin fa-2x"/>
-                <p class="mt-2">Loading dashboard...</p>
             </div>
 
-            <!-- Dashboard Statistics -->
-            <div t-else="" class="row g-3">
+            <t t-else="">
+                <t t-set="d" t-value="this.state.data"/>
 
-                <div class="col-12 col-md-6 col-xl-3">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <p class="text-muted mb-2">Total Companies</p>
-                                    <h2 t-esc="this.state.stats.total_companies"/>
-                                </div>
-                                <i class="fa fa-building fa-2x text-primary"/>
-                            </div>
-                            <button class="btn btn-link px-0 mt-3"
-                                    t-on-click="() => this.openCompanies()">
-                                View Companies →
-                            </button>
-                        </div>
+                <!-- Header: onboarding + refresh actions (managers only) -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                    <div>
+                        <h1 class="mb-1">Superadmin Dashboard</h1>
+                        <p class="text-muted mb-0">
+                            Databases with the connector installed and their companies.
+                            Last sync: <t t-out="this.formatDate(d.last_sync_at)"/>
+                        </p>
+                    </div>
+                    <div t-if="d.can_manage" class="d-flex gap-2">
+                        <button class="btn btn-secondary" t-on-click="() => this.syncAll()"
+                                t-att-disabled="this.state.syncing or !d.kpis.databases_total">
+                            <i t-attf-class="fa fa-refresh me-1 {{ this.state.syncing ? 'fa-spin' : '' }}"/>
+                            Sync all
+                        </button>
+                        <button class="btn btn-primary" t-on-click="() => this.registerDatabase()">
+                            <i class="fa fa-plus me-1"/> Register database
+                        </button>
                     </div>
                 </div>
 
-                <div class="col-12 col-md-6 col-xl-3">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <p class="text-muted mb-2">Active Companies</p>
-                                    <h2 t-esc="this.state.stats.active_companies"/>
-                                </div>
-                                <i class="fa fa-check-circle fa-2x text-success"/>
-                            </div>
-                            <button class="btn btn-link px-0 mt-3"
-                                    t-on-click="() => this.openCompanies()">
-                                View Companies →
-                            </button>
-                        </div>
-                    </div>
+                <!-- Empty state -->
+                <div t-if="!d.kpis.databases_total" class="alert alert-info">
+                    No database is registered yet.
+                    <t t-if="d.can_manage">
+                        Install <b>Superadmin Connector</b> in a client database, then use
+                        <b>Register database</b> and enter its URL and API key.
+                    </t>
+                    <t t-else="">Ask a Superadmin manager to register one.</t>
                 </div>
 
-                <div class="col-12 col-md-6 col-xl-3">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <p class="text-muted mb-2">Total Databases</p>
-                                    <h2 t-esc="this.state.stats.total_databases"/>
-                                </div>
-                                <i class="fa fa-database fa-2x text-info"/>
-                            </div>
-                            <button class="btn btn-link px-0 mt-3"
-                                    t-on-click="() => this.openDatabases()">
-                                View Databases →
-                            </button>
-                        </div>
-                    </div>
+                <!-- Attention banners -->
+                <div t-if="d.kpis.databases_error" class="alert alert-danger">
+                    <i class="fa fa-exclamation-triangle me-1"/>
+                    <t t-out="d.kpis.databases_error"/> database(s) cannot be reached. Their data is hidden below.
+                </div>
+                <div t-if="d.kpis.keys_expiring" class="alert alert-warning">
+                    <i class="fa fa-key me-1"/>
+                    <t t-out="d.kpis.keys_expiring"/> API key(s) expire within 7 days.
+                </div>
+                <div t-if="d.kpis.privileged_keys" class="alert alert-warning">
+                    <i class="fa fa-shield me-1"/>
+                    <t t-out="d.kpis.privileged_keys"/> database(s) use an internal or admin API user.
+                    Switch to a dedicated portal integration user.
                 </div>
 
-                <div class="col-12 col-md-6 col-xl-3">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <p class="text-muted mb-2">Production Databases</p>
-                                    <h2 t-esc="this.state.stats.production_databases"/>
+                <t t-if="d.kpis.databases_total">
+                    <!-- KPIs -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-xl-3">
+                            <div class="card o_superadmin_kpi h-100" t-on-click="() => this.openDatabases()">
+                                <div class="card-body">
+                                    <div class="text-muted">Connected databases</div>
+                                    <div class="o_superadmin_kpi_value">
+                                        <t t-out="d.kpis.databases_connected"/>
+                                        <small class="text-muted fs-5">/ <t t-out="d.kpis.databases_total"/></small>
+                                    </div>
                                 </div>
-                                <i class="fa fa-server fa-2x text-warning"/>
                             </div>
-                            <button class="btn btn-link px-0 mt-3"
-                                    t-on-click="() => this.openDatabases()">
-                                View Databases →
-                            </button>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="card o_superadmin_kpi h-100" t-on-click="() => this.openCompanies()">
+                                <div class="card-body">
+                                    <div class="text-muted">Companies</div>
+                                    <div class="o_superadmin_kpi_value" t-out="d.kpis.companies"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="card o_superadmin_kpi h-100">
+                                <div class="card-body">
+                                    <div class="text-muted">Internal users</div>
+                                    <div class="o_superadmin_kpi_value" t-out="d.kpis.users"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="card o_superadmin_kpi h-100" t-on-click="() => this.openDatabases()">
+                                <div class="card-body">
+                                    <div class="text-muted">Need attention</div>
+                                    <div class="o_superadmin_kpi_value"
+                                         t-out="d.kpis.databases_error + d.kpis.databases_pending"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-            </div>
+                    <!-- Money per currency (never summed across currencies) -->
+                    <div t-if="d.money.length" class="card mb-4">
+                        <div class="card-header fw-bold">Financials by currency</div>
+                        <div class="table-responsive">
+                            <table class="table table-sm mb-0">
+                                <thead>
+                                    <tr><th>Currency</th><th class="text-end">Revenue (30d)</th>
+                                        <th class="text-end">Receivable</th><th class="text-end">Payable</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="d.money" t-as="m" t-key="m.currency">
+                                        <td t-out="m.currency"/>
+                                        <td class="text-end" t-out="this.formatAmount(m.revenue_30d)"/>
+                                        <td class="text-end" t-out="this.formatAmount(m.receivable)"/>
+                                        <td class="text-end" t-out="this.formatAmount(m.payable)"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Databases -->
+                    <div class="card mb-4">
+                        <div class="card-header fw-bold">Databases</div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm mb-0">
+                                <thead>
+                                    <tr><th>Status</th><th>Database</th><th>Client</th><th>Env</th>
+                                        <th>Odoo</th><th class="text-end">Companies</th><th>Last sync</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="d.databases" t-as="db" t-key="db.id"
+                                        class="o_superadmin_row_click" t-on-click="() => this.openDatabase(db.id)">
+                                        <td><span t-attf-class="badge {{ this.stateClass(db) }}" t-out="this.stateLabel(db)"/></td>
+                                        <td>
+                                            <div t-out="db.name"/>
+                                            <small t-if="db.last_error" class="text-danger" t-out="db.last_error"/>
+                                            <small t-elif="db.apps" class="text-muted" t-out="db.apps"/>
+                                        </td>
+                                        <td t-out="db.client_name"/>
+                                        <td class="text-capitalize" t-out="db.environment"/>
+                                        <td t-out="db.odoo_version"/>
+                                        <td class="text-end" t-out="db.company_count"/>
+                                        <td t-out="this.formatDate(db.last_sync_at)"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Companies of connected databases -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Companies</span>
+                            <input type="search" class="form-control form-control-sm w-auto"
+                                   placeholder="Search company or database"
+                                   t-model.proxy="this.state.search"/>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm mb-0">
+                                <thead>
+                                    <tr><th>Company</th><th>Database</th><th>Country</th>
+                                        <th class="text-end">Users</th><th>Cur.</th>
+                                        <th class="text-end">Revenue (30d)</th><th class="text-end">Receivable</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="this.filteredCompanies" t-as="c" t-key="c.id">
+                                        <td t-out="c.name"/>
+                                        <td t-out="c.database"/>
+                                        <td t-out="c.country"/>
+                                        <td class="text-end" t-out="c.users_count"/>
+                                        <td t-out="c.currency"/>
+                                        <td class="text-end" t-out="this.formatAmount(c.revenue_30d)"/>
+                                        <td class="text-end" t-out="this.formatAmount(c.receivable)"/>
+                                    </tr>
+                                    <tr t-if="!this.filteredCompanies.length">
+                                        <td colspan="7" class="text-center text-muted p-3">No company to show.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
         </div>
-
     </t>
 
 </templates>
